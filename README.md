@@ -2,7 +2,7 @@
 
 A lightweight PHP client for interacting with ChromaDB v2 APIs.
 
-> Inspired by [CodeWithKyrian/chromadb-laravel](https://github.com/CodeWithKyrian/chromadb-laravel), but that project does not support ChromaDB v2.
+> Inspired by [CodeWithKyrian/chromadb-php](https://github.com/CodeWithKyrian/chromadb-php), but that project does not support ChromaDB v2.
 
 ## Installation
 
