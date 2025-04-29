@@ -1,29 +1,3 @@
-# ChromaDB PHP Client
-
-A lightweight PHP client for interacting with ChromaDB v2 APIs.
-
-> Inspired by [CodeWithKyrian/chromadb-laravel](https://github.com/CodeWithKyrian/chromadb-laravel), but that project does not support ChromaDB v2.
-
-## Installation
-
-```bash
-composer require theogibbons/chroma-php
-```
-
-## Example 1: Check if the server is running
-
-```php
-use TheoGibbons\ChromaPHP\ChromaDBClient;
-
-$chroma = ChromaDBClient::connect();
-
-$heartbeat = $chroma->heartbeat();
-print_r($heartbeat);
-```
-
-## Example 2: Basic Usage ([View full example](/examples/basic_usage.php))
-
-```php
 <?php
 
 require '../vendor/autoload.php';
@@ -76,9 +50,9 @@ try {
 
     echo "\n----------------- Checking collection exists -----------------\n";
     $found = count(array_filter(
-        $chroma->listCollections($tenantName, $databaseName),
-        fn($c) => $c['id'] === $createResponse['id']
-    )) > 0;
+            $chroma->listCollections($tenantName, $databaseName),
+            fn($c) => $c['id'] === $createResponse['id']
+        )) > 0;
     echo $found ? "Collection found.\n" : "Collection not found.\n";
 
     echo "\n----------------- Deleting collection -----------------\n";
@@ -92,57 +66,3 @@ try {
 }
 
 die("Done\n");
-```
-
-## Running ChromaDB
-
-You’ll need to have ChromaDB running in client/server mode.
-
-The easiest way is to run it in Docker:
-
-```bash
-docker run -p 8000:8000 chromadb/chroma
-```
-
-Or, use Docker Compose:
-
-```yaml
-services:
-  chroma:
-    image: chromadb/chroma
-    ports:
-      - "8000:8000"
-    volumes:
-      - chroma-data:/chroma/chroma
-
-volumes:
-  chroma-data:
-    driver: local
-```
-
-Start it with:
-
-```bash
-docker-compose up -d
-```
-
-Then visit the Swagger docs link in your browser to check it's running correctly `http://localhost:8000/docs/`
-
-Now you can interact with ChromaDB here `http://localhost:8000`
-
-More info: [Chroma Documentation](https://docs.trychroma.com/deployment)
-
-## Features
-
-- ✅ Full support for Tenants, Databases, and Collections
-- 📄 Add, Query, and Upsert documents
-- ⚡ Lightweight (only dependency is Guzzle)
-
-## Requirements
-
-- PHP 8.1 or higher
-- ChromaDB v2 running in server mode
-
-## License
-
-MIT
