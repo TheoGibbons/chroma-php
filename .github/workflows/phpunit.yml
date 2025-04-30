@@ -1,4 +1,4 @@
-name: Run PHPUnit Tests
+name: Run ChromaDB PHPUnit Tests
 
 on:
   push:
@@ -10,19 +10,43 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      chroma:
+        image: chromadb/chroma
+        ports:
+          - 8000:8000
+        options: >-
+          --health-cmd="curl --fail http://localhost:8000/api/v2/heartbeat || exit 1"
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=10
+
     steps:
-      - name: 📥 Checkout code
+      - name: 📥 Checkout repository
         uses: actions/checkout@v3
 
       - name: 🧰 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           extensions: mbstring, json
           coverage: none
 
       - name: 📦 Install dependencies
-        run: composer install --no-progress --no-interaction
+        run: composer install --no-interaction --prefer-dist
 
-      - name: 🧪 Run PHPUnit tests
-        run: ./vendor/bin/phpunit tests
+      - name: ⏱️ Wait for ChromaDB to be ready
+        run: |
+          for i in {1..15}; do
+            if curl -s http://localhost:8000/api/v2/heartbeat | grep -q timestamp; then
+              echo "ChromaDB is up!";
+              exit 0;
+            fi
+            echo "Waiting for ChromaDB to start..."
+            sleep 3
+          done
+          echo "❌ ChromaDB did not become ready in time" >&2
+          exit 1
+
+      - name: 🧪 Run PHPUnit
+        run: ./vendor/bin/phpunit --testdox
