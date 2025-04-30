@@ -15,11 +15,6 @@ jobs:
         image: chromadb/chroma:1.0.0
         ports:
           - 8000:8000
-        options: >-
-          --health-cmd="curl --fail http://localhost:8000/api/v2/heartbeat || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=20
 
     steps:
       - name: 📥 Checkout repository
@@ -29,16 +24,25 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, json
+          extensions: mbstring
           coverage: none
 
+      - name: 📦 Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: 📦 Install dependencies
-        run: composer install --no-interaction --prefer-dist
+        run: composer install --no-interaction --prefer-dist --no-scripts
 
       - name: ⏱️ Wait for ChromaDB to be ready
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:8000/api/v2/heartbeat | grep -q timestamp; then
+            response=$(curl -s http://chroma:8000/api/v2/heartbeat)
+            if echo "$response" | grep -q timestamp; then
               echo "ChromaDB is up!";
               exit 0;
             fi
