@@ -12,14 +12,14 @@ jobs:
 
     services:
       chroma:
-        image: chromadb/chroma
+        image: chromadb/chroma:1.0.0
         ports:
           - 8000:8000
         options: >-
           --health-cmd="curl --fail http://localhost:8000/api/v2/heartbeat || exit 1"
-          --health-interval=5s
-          --health-timeout=2s
-          --health-retries=10
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=20
 
     steps:
       - name: 📥 Checkout repository
@@ -37,13 +37,13 @@ jobs:
 
       - name: ⏱️ Wait for ChromaDB to be ready
         run: |
-          for i in {1..15}; do
+          for i in {1..30}; do
             if curl -s http://localhost:8000/api/v2/heartbeat | grep -q timestamp; then
               echo "ChromaDB is up!";
               exit 0;
             fi
             echo "Waiting for ChromaDB to start..."
-            sleep 3
+            sleep 5
           done
           echo "❌ ChromaDB did not become ready in time" >&2
           exit 1
