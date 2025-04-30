@@ -19,7 +19,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "TheoGibbons\\ChromaPHP\\Tests\\": "tests/"
+      "TheoGibbons\\ChromaPHP\\Tests\\": "tests"
     }
   },
   "require-dev": {

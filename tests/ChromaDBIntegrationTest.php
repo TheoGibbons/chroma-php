@@ -1,5 +1,7 @@
 <?php
 
+namespace TheoGibbons\ChromaPHP\Tests;
+
 use PHPUnit\Framework\TestCase;
 use TheoGibbons\ChromaPHP\ChromaDB;
 use TheoGibbons\ChromaPHP\ChromaDBClient;
