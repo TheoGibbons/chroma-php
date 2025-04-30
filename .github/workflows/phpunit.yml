@@ -12,14 +12,9 @@ jobs:
 
     services:
       chroma:
-        image: chromadb/chroma:1.0.0
+        image: chromadb/chroma
         ports:
           - 8000:8000
-        options: >-
-          --health-cmd="wget --spider http://localhost:8000/api/v2/heartbeat || exit 1"
-          --health-interval=5s
-          --health-timeout=3s
-          --health-retries=10
 
     steps:
       - name: 📥 Checkout repository
@@ -54,4 +49,4 @@ jobs:
 
       - name: 🔍 Debug ChromaDB container logs
         if: failure()
-        run: docker logs $(docker ps -q --filter "ancestor=chromadb/chroma:1.0.0")
+        run: docker logs $(docker ps -q --filter "ancestor=chromadb/chroma")
