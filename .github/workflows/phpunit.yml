@@ -15,6 +15,11 @@ jobs:
         image: chromadb/chroma:1.0.0
         ports:
           - 8000:8000
+        options: >-
+          --health-cmd="curl --fail http://localhost:8000/api/v2/heartbeat || exit 1"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=10
 
     steps:
       - name: 📥 Checkout repository
@@ -27,30 +32,26 @@ jobs:
           extensions: mbstring
           coverage: none
 
-      - name: 📦 Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
       - name: 📦 Install dependencies
         run: composer install --no-interaction --prefer-dist --no-scripts
 
       - name: ⏱️ Wait for ChromaDB to be ready
         run: |
           for i in {1..30}; do
-            response=$(curl -s http://localhost:8000/api/v2/heartbeat)
+            response=$(curl -s http://localhost:8000/api/v2/heartbeat || true)
             if echo "$response" | grep -q timestamp; then
-              echo "ChromaDB is up!";
+              echo "✅ ChromaDB is up!";
               exit 0;
             fi
-            echo "Waiting for ChromaDB to start..."
+            echo "⏳ Waiting for ChromaDB..."
             sleep 5
           done
-          echo "❌ ChromaDB did not become ready in time" >&2
+          echo "❌ ChromaDB did not become ready in time"
           exit 1
 
       - name: 🧪 Run PHPUnit
         run: ./vendor/bin/phpunit --testdox
+
+      - name: 🔍 Debug ChromaDB container logs
+        if: failure()
+        run: docker logs $(docker ps -q --filter "ancestor=chromadb/chroma:1.0.0")
