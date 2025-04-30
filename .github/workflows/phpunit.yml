@@ -41,7 +41,7 @@ jobs:
       - name: ⏱️ Wait for ChromaDB to be ready
         run: |
           for i in {1..30}; do
-            response=$(curl -s http://chroma:8000/api/v2/heartbeat)
+            response=$(curl -s http://localhost:8000/api/v2/heartbeat)
             if echo "$response" | grep -q timestamp; then
               echo "ChromaDB is up!";
               exit 0;
