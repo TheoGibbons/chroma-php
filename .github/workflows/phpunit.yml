@@ -16,7 +16,7 @@ jobs:
         ports:
           - 8000:8000
         options: >-
-          --health-cmd="curl --fail http://localhost:8000/api/v2/heartbeat || exit 1"
+          --health-cmd="wget --spider http://localhost:8000/api/v2/heartbeat || exit 1"
           --health-interval=5s
           --health-timeout=3s
           --health-retries=10
@@ -38,7 +38,7 @@ jobs:
       - name: ⏱️ Wait for ChromaDB to be ready
         run: |
           for i in {1..30}; do
-            response=$(curl -s http://localhost:8000/api/v2/heartbeat || true)
+            response=$(curl -s http://chroma:8000/api/v2/heartbeat || true)
             if echo "$response" | grep -q timestamp; then
               echo "✅ ChromaDB is up!";
               exit 0;
