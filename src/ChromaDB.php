@@ -163,6 +163,23 @@ class ChromaDB extends ChromaDBInternals
         ]), $payload);
     }
 
+    /**
+     *
+     *
+     * @param array $payload might look like:
+     * * [
+     * *     "query_embeddings" => [$this->createEmbedding($documents)],
+     * *     "n_results"        => 10,
+     * *     "where"            => [
+     * *         "\$and" => [
+     * *             ["entity_id" => $bankTransaction->entity_id],
+     * *             ["currency" => $bankTransaction->currency_code],
+     * *         ]
+     * *     ]
+     * * ]
+     *
+     * @see https://cookbook.chromadb.dev/core/filters/ for "where" syntax
+     */
     public function queryCollection(string $tenant, string $database, string $collectionId, array $payload): array
     {
         return $this->postJson($this->uri("tenants/{tenant}/databases/{database}/collections/{collection}/query", [
