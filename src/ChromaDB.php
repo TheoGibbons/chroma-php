@@ -137,12 +137,11 @@ class ChromaDB extends ChromaDBInternals
 
     public function countCollection(string $tenant, string $database, string $collectionId): int
     {
-        $response = $this->getJson($this->uri("tenants/{tenant}/databases/{database}/collections/{collection}/count", [
+        return $this->getJson($this->uri("tenants/{tenant}/databases/{database}/collections/{collection}/count", [
             'tenant'     => $tenant,
             'database'   => $database,
             'collection' => $collectionId,
         ]));
-        return (int)($response['count'] ?? 0);
     }
 
     public function getFromCollection(string $tenant, string $database, string $collectionId, array $payload): array

@@ -23,7 +23,7 @@ class ChromaDBInternals
         }
     }
 
-    public function getJson(string $path): array
+    public function getJson(string $path): mixed
     {
         try {
             $response = $this->httpClient->get($path);
